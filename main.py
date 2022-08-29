@@ -249,11 +249,11 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
             countdown[k0] = v0
     for key0, value0 in countdown.items():
         # 获取距离下次生日的时间
-        count_day = get_birthday(value0["countdown"], year, today)
+        count_day = get_Memorial_Day(value0["countdown"], year, today)
         if count_day == 0:
             count_data = "今天是{}哦！！！".format(value0["name"], value0["name"])
         else:
-            count_data = "距离{}还有{}天".format(value0["name"], birth_day)
+            count_data = "距离{}还有{}天".format(value0["name"], count_day)
         # 将倒计时数据插入data
         data["data"][key0] = {"value": count_data, "color": get_color()}
         headers1 = {

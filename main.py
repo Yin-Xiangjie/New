@@ -101,6 +101,47 @@ def get_birthday(birthday, year, today):
         birth_day = str(birth_date.__sub__(today)).split(" ")[0]
     return birth_day
  
+ def get_Memorial_Day(Memorial_Day, year, today):
+    Memorial_Day_year = Memorial_Day.split("-")[0]
+    # 判断是否为农历倒计时日期
+    if Memorial_Day_year[0] == "r":
+        r_mouth = int(Memorial_Day.split("-")[1])
+        r_day = int(Memorial_Day.split("-")[2])
+        # 获取农历纪念日的今年对应的月和日
+        try:
+            Day = ZhDate(year, r_mouth, r_day).to_datetime().date()
+        except TypeError:
+            print("请检查倒计时的日子是否在今年存在")
+            os.system("pause")
+            sys.exit(1)
+        birthday_month = Day.month
+        birthday_day = Day.day
+        # 今年生日
+        year_date = date(year, birthday_month, birthday_day)
+    else:
+        # a = datetime.timedelta(datetime.strptime(Memorial_Day, '%Y-%m-%d'),today)
+        # 获取国历生日的今年对应月和日
+        birthday_month = int(Memorial_Day.split("-")[1])
+        birthday_day = int(Memorial_Day.split("-")[2])
+        # 今年生日
+        year_date = date(year, birthday_month, birthday_day)
+    # 计算纪念日年份，如果还没过，按当年减，如果过了需要+1
+    # 计算纪念日年份，如果还没过，按当年减，如果过了需要+1
+    if today > year_date:
+        if Memorial_Day[0] == "r":
+            # 获取农历明年纪念日的月和日
+            r_last_birthday = ZhDate((year + 1), r_mouth, r_day).to_datetime().date()
+            birth_date = date((year + 1), r_last_birthday.month, r_last_birthday.day)
+        else:
+            birth_date = date((year + 1), birthday_month, birthday_day)
+        birth_day = str(birth_date.__sub__(today)).split(" ")[0]
+    elif today == year_date:
+        birth_day = 0
+    else:
+        birth_date = year_date
+        birth_day = str(birth_date.__sub__(today)).split(" ")[0]
+    return birth_day
+ 
  
 def get_ciba():
     url = "http://open.iciba.com/dsapi/"
@@ -200,6 +241,38 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
         print("推送消息成功")
     else:
         print(response)
+    
+    # 获取所有倒计时数据
+    countdown = {}
+    for k0, v0 in config.items():
+        if k0[0:5] == "countdown":
+            countdown[k0] = v0
+    for key0, value0 in countdown.items():
+        # 获取距离下次生日的时间
+        count_day = get_birthday(value0["countdown"], year, today)
+        if count_day == 0:
+            count_data = "今天是{}哦！！！".format(value0["name"], value0["name"])
+        else:
+            count_data = "距离{}还有{}天".format(value0["name"], birth_day)
+        # 将倒计时数据插入data
+        data["data"][key0] = {"value": count_data, "color": get_color()}
+        headers1 = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                          'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+        }
+    response1 = post(url, headers=headers1, json=data).json()
+    if response1["errcode"] == 40037:
+        print("推送消息失败，请检查模板id是否正确")
+    elif response1["errcode"] == 40036:
+        print("推送消息失败，请检查模板id是否为空")
+    elif response1["errcode"] == 40003:
+        print("推送消息失败，请检查微信号是否正确")
+    elif response1["errcode"] == 0:
+        print("推送消息成功")
+    else:
+        print(response1)
+      
  
  
 if __name__ == "__main__":

@@ -100,8 +100,8 @@ def get_birthday(birthday, year, today):
         birth_date = year_date
         birth_day = str(birth_date.__sub__(today)).split(" ")[0]
     return birth_day
- 
- def get_Memorial_Day(Memorial_Day, year, today):
+   
+def get_Memorial_Day(Memorial_Day, year, today):
     Memorial_Day_year = Memorial_Day.split("-")[0]
     # 判断是否为农历倒计时日期
     if Memorial_Day_year[0] == "r":

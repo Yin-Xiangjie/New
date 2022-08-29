@@ -175,7 +175,7 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
             }
         }
     }
-    for key, value in birthdays.items():
+        for key, value in birthdays.items():
         # 获取距离下次生日的时间
         birth_day = get_birthday(value["birthday"], year, today)
         if birth_day == 0:
@@ -184,12 +184,36 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
             birthday_data = "距离{}的生日还有{}天".format(value["name"], birth_day)
         # 将生日数据插入data
         data["data"][key] = {"value": birthday_data, "color": get_color()}
-    headers = {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
-    }
+        headers = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                          'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+        }
+        # 获取距离纪念日的时间
+        memorial_day = get_birthday(value["birthday"], year, today)
+        if memorial_day == 0:
+            memorial_day = "今天是{}！！！".format(value["name"], value["name"])
+        else:
+            memorial_day = "距离{}还有{}天".format(value["name"], birth_day)
+        # 将倒计时数据插入data
+        data["data"][key] = {"value": memorial_day, "color": get_color()}
+        headers1 = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                          'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+        }
     response = post(url, headers=headers, json=data).json()
+    if response["errcode"] == 40037:
+        print("推送消息失败，请检查模板id是否正确")
+    elif response["errcode"] == 40036:
+        print("推送消息失败，请检查模板id是否为空")
+    elif response["errcode"] == 40003:
+        print("推送消息失败，请检查微信号是否正确")
+    elif response["errcode"] == 0:
+        print("推送消息成功")
+    else:
+        print(response)
+    response = post(url, headers=headers1, json=data).json()
     if response["errcode"] == 40037:
         print("推送消息失败，请检查模板id是否正确")
     elif response["errcode"] == 40036:

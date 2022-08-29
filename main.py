@@ -175,7 +175,7 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
             }
         }
     }
-        for key, value in birthdays.items():
+    for key, value in birthdays.items():
         # 获取距离下次生日的时间
         birth_day = get_birthday(value["birthday"], year, today)
         if birth_day == 0:

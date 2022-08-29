@@ -245,7 +245,7 @@ def send_message(to_user, access_token, region_name, weather, temp, wind_dir, no
     # 获取所有倒计时数据
     countdown = {}
     for k0, v0 in config.items():
-        if k0[0:5] == "countdown":
+        if k0[0:5] == "count":
             countdown[k0] = v0
     for key0, value0 in countdown.items():
         # 获取距离下次生日的时间
